@@ -1,0 +1,17 @@
+1.下载go1.13.6.linux-arm64.tar.gz并将其解压到指定目录（此处为/root）
+wget https://studygolang.com/dl/golang/go1.13.5.linux-arm64.tar.gz
+tar -xvf go1.13.5.linux-arm64.tar.gz -C /usr/local/fabric
+2.修改系统环境变量: vi /etc/profile
+打开文件后在最后面添加：
+export GOROOT=/usr/local/fabric/go
+export GOPATH=/usr/local/fabric/gopath
+export PATH=$GOROOT/bin:$GOPATH/bin:$PATH
+3.使系统环境变量生效
+source  /etc/profile
+4.检查版本
+go version
+
+
+
+ps: 如果gopath文件夹,不存在,则手动创建一个,命令: mkdir gopath
+gopath    #存放go项目源码的路径

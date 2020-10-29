@@ -1,0 +1,40 @@
+前言:
+1.环境:
+Linux ecs-8aac-0001 4.15.0-70-generic #79-Ubuntu SMP Tue Nov 12 10:36:10 UTC 2019 aarch64 aarch64 aarch64 GNU/Linux
+2.三台服务器: 192.168.0.213(orderer+org1) 192.168.0.61(org2) 192.168.0.29(org3)
+3.提前安装go丶docker丶docker-cmpose
+4.提前准备好arm版本镜像源和二进制文件,存在到相对应的目录,并设置好go的环境变量
+
+
+开始:
+1.进入192.168.0.213,执行./byfn.sh,启动节点,并生成两个文件夹channel-artifacts和crypto-config
+2.进入192.168.0.213,将这两个文件夹,传递给192.168.0.61,192.168.0.29
+scp -r crypto-config root@192.168.0.61:/usr/local/fabric/gopath/src/github.com/hyperledger/fabric-peer-org2/
+scp -r channel-artifacts root@192.168.0.61:/usr/local/fabric/gopath/src/github.com/hyperledger/fabric-peer-org2/
+
+scp -r crypto-config root@192.168.0.29:/usr/local/fabric/gopath/src/github.com/hyperledger/fabric-peer-org3/
+scp -r channel-artifacts root@192.168.0.29:/usr/local/fabric/gopath/src/github.com/hyperledger/fabric-peer-org3/
+3.进入192.168.0.61,执行./start.sh,启动节点 ,进入192.168.0.29,执行./start.sh,启动节点
+4.进入192.168.0.213,执行命令
+docker exec cli scripts/script.sh
+5.进入192.168.0.213,执行命令
+docker cp cli:/opt/gopath/src/github.com/hyperledger/fabric/peer/mychannel.block /usr/local/fabric/gopath/src/github.com/hyperledger/fabric-orderer/
+scp  mychannel.block root@192.168.0.61:/usr/local/fabric/gopath/src/github.com/hyperledger/fabric-peer-org2/
+scp  mychannel.block root@192.168.0.29:/usr/local/fabric/gopath/src/github.com/hyperledger/fabric-peer-org3/
+6.进入192.168.0.61,执行命令
+docker cp /usr/local/fabric/gopath/src/github.com/hyperledger/fabric-peer-org2/mychannel.block cli:/opt/gopath/src/github.com/hyperledger/fabric/peer/
+6.进入192.168.0.29,执行命令
+docker cp /usr/local/fabric/gopath/src/github.com/hyperledger/fabric-peer-org3/mychannel.block cli:/opt/gopath/src/github.com/hyperledger/fabric/peer/
+7.进入192.168.0.61,执行命令
+docker exec cli scripts/script.sh
+8.进入192.168.0.213,执行命令
+docker exec cli scripts/chaincode.sh
+
+验证:
+输入命令: docker exec -it cli bash
+1.查询所有
+peer chaincode query -C mychannel -n fabcar -c '{"Args":["queryAllCars"]}' --tls true --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+2.添加
+peer chaincode invoke -o orderer.example.com:7050 --tls true --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem --peerAddresses peer0.org1.example.com:7051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --peerAddresses peer0.org2.example.com:9051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt -C mychannel -n fabcar -c '{"Args":["createCar","CAR111111","monkey2","monkey1","monkey1","monkey1"]}'
+
+

@@ -1,0 +1,7 @@
+1.在arm机器上解压docker-compose-aarch64.tar.gz
+2.将解压后的docker-compose文件,放入/usr/local/bin/目录下
+tar -xvf docker-compose-aarch64.tar.gz -C /usr/local/bin/
+3.赋予执行权限
+chmod a+x docker-compose
+4.查看版本
+docker-compose -version

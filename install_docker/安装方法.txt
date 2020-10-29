@@ -1,0 +1,9 @@
+参考地址: https://www.cnblogs.com/jinanxiaolaohu/p/12679149.html
+
+1.将同目录三个文件,放入arm机器的同一目录
+2.arm机器上执行
+dpkg -i *.deb
+3.设置服务自动启动
+systemctl enable docker && systemctl restart docker
+4.查看版本
+docker info   或者  docker -v

@@ -1,0 +1,77 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+services:
+      
+  peer0.org4.example.com:
+    container_name: peer0.org4.example.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.org4.example.com
+      - CORE_PEER_ADDRESS=peer0.org4.example.com:13051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:13051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.org4.example.com:13052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:13052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org4.example.com:13051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.org4.example.com:14051
+      - CORE_PEER_LOCALMSPID=Org4MSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/org4.example.com/peers/peer0.org4.example.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/org4.example.com/peers/peer0.org4.example.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.org4.example.com:/var/hyperledger/production
+    ports:
+      - 13051:13051
+      - 13052:13052
+      - 13053:13053
+    extra_hosts:
+      - "orderer.example.com:192.168.0.213"
+      - "peer0.org4.example.com:192.168.0.29"
+      - "peer1.org4.example.com:192.168.0.29"
+      - "peer0.org3.example.com:192.168.0.29"
+      - "peer1.org3.example.com:192.168.0.29"
+      - "peer0.org2.example.com:192.168.0.61"
+      - "peer1.org2.example.com:192.168.0.61"
+      - "peer0.org1.example.com:192.168.0.213"
+      - "peer1.org1.example.com:192.168.0.213"
+
+
+  peer1.org4.example.com:
+    container_name: peer1.org4.example.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.org4.example.com
+      - CORE_PEER_ADDRESS=peer1.org4.example.com:14051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:14051
+      - CORE_PEER_CHAINCODEADDRESS=peer1.org4.example.com:14052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:14052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org4.example.com:14051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org4.example.com:13051
+      - CORE_PEER_LOCALMSPID=Org4MSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/org4.example.com/peers/peer1.org4.example.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/org4.example.com/peers/peer1.org4.example.com/tls:/etc/hyperledger/fabric/tls
+        - peer1.org4.example.com:/var/hyperledger/production
+    ports:
+      - 14051:14051
+      - 14052:14052
+      - 14053:14053
+    extra_hosts:
+      - "orderer.example.com:192.168.0.213"
+      - "peer0.org4.example.com:192.168.0.29"
+      - "peer1.org4.example.com:192.168.0.29"
+      - "peer0.org3.example.com:192.168.0.29"
+      - "peer1.org3.example.com:192.168.0.29"
+      - "peer0.org2.example.com:192.168.0.61"
+      - "peer1.org2.example.com:192.168.0.61"
+      - "peer0.org1.example.com:192.168.0.213"
+      - "peer1.org1.example.com:192.168.0.213"
